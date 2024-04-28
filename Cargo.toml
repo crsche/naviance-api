@@ -37,4 +37,4 @@ uuid = { version = "1.8.0", features = ["serde"] }
 [profile.release]
 lto = "fat"
 strip = false
-codegen-units = 1
+# codegen-units = 1

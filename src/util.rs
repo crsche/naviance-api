@@ -76,11 +76,11 @@ pub fn act_to_sat(act: u32) -> RangeInclusive<u32> {
     }
 }
 
-pub fn none_if_zero<'de, D>(deserializer: D) -> Result<Option<i64>, D::Error>
+pub fn none_if_zero<'de, D>(deserializer: D) -> Result<Option<u32>, D::Error>
 where
     D: Deserializer<'de>,
 {
-    match Option::<i64>::deserialize(deserializer)? {
+    match Option::<u32>::deserialize(deserializer)? {
         Some(0) => Ok(None),
         other => Ok(other),
         // Ok(0) => None,

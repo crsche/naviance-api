@@ -5,7 +5,7 @@ use url::Url;
 use uuid::Uuid;
 
 use crate::{
-    util::{bool_from_int_opt, none_if_empty_string, none_if_zero},
+    util::{bool_from_int_opt, none_if_empty_string, none_if_zero, sat_to_act},
     Error, Result,
 };
 
@@ -67,9 +67,9 @@ pub struct Config {
     pub recaptcha_site_key: Option<String>,
     pub inline_manual_url: Option<String>,
     pub common_app_base_url: Option<String>,
-    pub heap_analytics_api_code: Option<i64>,
+    pub heap_analytics_api_code: Option<u32>,
     pub readiness_indicators_ui_url: Option<String>,
-    pub phrase_batch_limit: Option<i64>,
+    pub phrase_batch_limit: Option<u32>,
     pub headed2_ui_url: Option<String>,
     pub headed2_token_exchange_url: Option<String>,
     pub local_opportunities_url: Option<String>,
@@ -110,10 +110,10 @@ impl PublicEndpoint for Config {}
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Paged<T> {
-    pub page:        Option<i64>,
-    pub limit:       Option<i64>,
-    pub total_items: Option<i64>,
-    pub total_pages: Option<i64>,
+    pub page:        Option<u32>,
+    pub limit:       Option<u32>,
+    pub total_items: Option<u32>,
+    pub total_pages: Option<u32>,
     pub data:        Vec<T>,
 }
 
@@ -135,10 +135,10 @@ impl AuthEndpoint for SchoolsImThinkingAbout {}
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct School {
-    pub id:                     Option<i64>,
-    pub interest_level:         Option<i64>,
-    pub expected_outcome:       Option<i64>,
-    pub added_by_type:          Option<i64>,
+    pub id:                     Option<u32>,
+    pub interest_level:         Option<u32>,
+    pub expected_outcome:       Option<u32>,
+    pub added_by_type:          Option<u32>,
     pub date_added:             Option<NaiveDate>,
     #[serde(deserialize_with = "none_if_empty_string")]
     pub college_id:             Option<String>,
@@ -153,7 +153,7 @@ pub struct College {
     pub featured: Option<bool>,
     #[serde(deserialize_with = "none_if_empty_string")]
     pub id: Option<String>,
-    pub hobsons_id: Option<i64>,
+    pub hobsons_id: Option<u32>,
     #[serde(deserialize_with = "none_if_empty_string")]
     pub name: Option<String>,
     #[serde(deserialize_with = "none_if_empty_string")]
@@ -176,7 +176,7 @@ pub struct College {
     pub latitude: Option<f64>,
     #[serde(deserialize_with = "none_if_empty_string")]
     pub url: Option<String>,
-    pub sector: Option<i64>,
+    pub sector: Option<u32>,
     #[serde(deserialize_with = "none_if_empty_string")]
     pub admissions_email: Option<String>,
     #[serde(deserialize_with = "none_if_empty_string")]
@@ -262,14 +262,14 @@ pub struct CoreMapping {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Deadline {
-    pub id: Option<i64>,
-    pub day: Option<i64>,
-    pub month: Option<i64>,
+    pub id: Option<u32>,
+    pub day: Option<u32>,
+    pub month: Option<u32>,
     #[serde(deserialize_with = "none_if_empty_string")]
     pub deadline_label: Option<String>,
     #[serde(deserialize_with = "none_if_empty_string")]
     pub college_id: Option<String>,
-    pub deadline_type_id: Option<i64>,
+    pub deadline_type_id: Option<u32>,
     #[serde(deserialize_with = "none_if_empty_string")]
     pub deadline_term_description: Option<String>,
     #[serde(rename = "type")]
@@ -287,7 +287,7 @@ pub struct EdocsCollege {
     pub is_electronic:          Option<bool>,
     #[serde(deserialize_with = "none_if_empty_string")]
     pub college_id:             Option<String>,
-    pub commonapp_id:           Option<i64>,
+    pub commonapp_id:           Option<u32>,
     #[serde(deserialize_with = "bool_from_int_opt")]
     pub commonapp_is_exclusive: Option<bool>,
     #[serde(deserialize_with = "bool_from_int_opt")]
@@ -301,8 +301,8 @@ pub struct EdocsCollege {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct SchoolArea {
-    pub hobsons_id: Option<i64>,
-    pub area_id:    Option<i64>,
+    pub hobsons_id: Option<u32>,
+    pub area_id:    Option<u32>,
 }
 
 pub type ScattergramSources = Vec<ScattergramSource>;
@@ -328,7 +328,7 @@ pub struct ScattergramSource {
     #[serde(deserialize_with = "none_if_empty_string")]
     pub name:           Option<String>,
     pub core_mapping:   Option<CoreMapping>,
-    pub total_applying: Option<i64>,
+    pub total_applying: Option<u32>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -381,7 +381,7 @@ pub struct Scattergrams {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GpaSpecific {
-    pub gpa_count:    Option<i64>,
+    pub gpa_count:    Option<u32>,
     pub gpa_sum:      Option<f64>,
     pub gpa_avg:      Option<f64>,
     pub gpa_conv_sum: Option<f64>,
@@ -403,10 +403,10 @@ impl TestType for SAT {}
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct TestSpecific<T: TestType> {
-    pub count:        Option<i64>,
-    pub sum:          Option<i64>,
+    pub count:        Option<u32>,
+    pub sum:          Option<u32>,
     pub avg:          Option<f64>,
-    pub gpa_count:    Option<i64>,
+    pub gpa_count:    Option<u32>,
     pub gpa_sum:      Option<f64>,
     pub gpa_avg:      Option<f64>,
     pub gpa_conv_sum: Option<f64>,
@@ -420,11 +420,46 @@ pub struct TestSpecific<T: TestType> {
 #[serde(rename_all = "camelCase")]
 pub struct Apps<T: TestType> {
     pub denied:              Option<Vec<App<T>>>,
+    pub waitlisted_denied:   Option<Vec<App<T>>>,
     pub waitlisted_accepted: Option<Vec<App<T>>>,
     pub waitlisted_unknown:  Option<Vec<App<T>>>,
     pub accepted:            Option<Vec<App<T>>>,
     #[serde(skip)]
     _marker:                 std::marker::PhantomData<T>,
+}
+
+impl<T: TestType> Apps<T> {
+    pub fn all(&self) -> Vec<&App<T>> {
+        let mut accepted = self.accepted();
+        let mut denied = self.denied();
+        accepted.append(&mut denied);
+        accepted
+    }
+
+    pub fn denied(&self) -> Vec<&App<T>> {
+        let mut total_denied = Vec::new();
+        if let Some(denied) = &self.denied {
+            total_denied.extend(denied.iter());
+        }
+        if let Some(waitlisted_unknown) = &self.waitlisted_unknown {
+            total_denied.extend(waitlisted_unknown.iter());
+        }
+        if let Some(waitlisted_denied) = &self.waitlisted_unknown {
+            total_denied.extend(waitlisted_denied.iter());
+        }
+        total_denied
+    }
+
+    pub fn accepted(&self) -> Vec<&App<T>> {
+        let mut total_accepted = Vec::new();
+        if let Some(accepted) = &self.accepted {
+            total_accepted.extend(accepted.iter());
+        }
+        if let Some(waitlisted_accepted) = &self.waitlisted_accepted {
+            total_accepted.extend(waitlisted_accepted.iter());
+        }
+        total_accepted
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -433,21 +468,36 @@ pub struct App<T: TestType> {
     pub current_student: Option<bool>,
     pub type_name: Option<TypeName>,
     #[serde(deserialize_with = "none_if_zero")]
-    pub act_composite: Option<i64>,
+    pub act_composite: Option<u32>,
     #[serde(deserialize_with = "none_if_zero")]
-    pub act_composite_student: Option<i64>,
+    pub act_composite_student: Option<u32>,
     #[serde(deserialize_with = "none_if_zero")]
-    pub highest_combo_sat: Option<i64>,
+    pub highest_combo_sat: Option<u32>,
     #[serde(rename = "studentSAT1600Composite")]
     #[serde(deserialize_with = "none_if_zero")]
-    pub student_sat1600_composite: Option<i64>,
+    pub student_sat1600_composite: Option<u32>,
     // pub is_test_optional: Option<serde_json::Value>,
     pub gpa: Option<f64>,
     #[serde(skip)]
     _marker: std::marker::PhantomData<T>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Hash, Eq)]
+impl App<SAT> {
+    pub fn to_act(&self) -> App<ACT> {
+        App {
+            current_student: self.current_student,
+            type_name: self.type_name.clone(),
+            act_composite: self.highest_combo_sat.map(|sat| sat_to_act(sat)),
+            act_composite_student: None,
+            highest_combo_sat: self.highest_combo_sat,
+            student_sat1600_composite: self.student_sat1600_composite,
+            gpa: self.gpa,
+            _marker: std::marker::PhantomData,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize, Hash, Eq)]
 pub enum TypeName {
     REA,
     EA,
@@ -465,7 +515,7 @@ pub enum TypeName {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct UserInfo {
-    pub user_id:   Option<i64>,
+    pub user_id:   Option<u32>,
     pub academics: Option<Academics>,
 }
 
@@ -476,11 +526,11 @@ pub struct Academics {
     // pub weighted_gpa:       Option<serde_json::Value>,
     pub raw_cumulative_gpa: Option<f64>,
     #[serde(deserialize_with = "none_if_zero")]
-    pub raw_weighted_gpa:   Option<i64>,
+    pub raw_weighted_gpa:   Option<u32>,
     #[serde(deserialize_with = "none_if_zero")]
-    pub sat:                Option<i64>,
+    pub sat:                Option<u32>,
     #[serde(deserialize_with = "none_if_zero")]
-    pub psat:               Option<i64>,
+    pub psat:               Option<u32>,
     #[serde(deserialize_with = "none_if_zero")]
-    pub act:                Option<i64>,
+    pub act:                Option<u32>,
 }

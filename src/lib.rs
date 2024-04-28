@@ -4,7 +4,9 @@ pub mod types;
 pub mod util;
 
 use lazy_static::lazy_static;
+use serde_json::Value;
 use thiserror::Error;
+use tracing::debug;
 use types::{
     ApplicationStatistics, AuthEndpoint, College, ScattergramSource, ScattergramSources,
     SchoolsImThinkingAbout,
